@@ -1,0 +1,127 @@
+
+CREATE EXTERNAL TABLE tweets (
+id BIGINT, 
+created_at STRING,
+text STRING,
+user STRUCT<screen_name:STRING, name:STRING, locations:STRING, description:STRING, created_at:STRING, followers_count:INT, url:STRING>
+) 
+ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe' 
+location '/user/flume/tweets';
+
+CREATE EXTERNAL TABLE tweets (
+   id BIGINT,
+   created_at STRING,
+   source STRING,
+   favorited BOOLEAN,
+   retweeted_status STRUCT<
+     text:STRING,
+     user:STRUCT<screen_name:STRING,name:STRING>,
+     retweet_count:INT>,
+   entities STRUCT<
+     urls:ARRAY<STRUCT<expanded_url:STRING>>,
+     user_mentions:ARRAY<STRUCT<screen_name:STRING,name:STRING>>,
+     hashtags:ARRAY<STRUCT<text:STRING>>>,
+   text STRING,
+   user STRUCT<
+     screen_name:STRING,
+     name:STRING,
+     friends_count:INT,
+     followers_count:INT,
+     statuses_count:INT,
+     verified:BOOLEAN,
+     utc_offset:INT,
+     time_zone:STRING>,
+   in_reply_to_screen_name STRING
+ ) 
+ PARTITIONED BY (datehour INT)
+ ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe'
+ LOCATION '/user/flume/tweets';
+
+
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+
+ CREATE EXTERNAL TABLE tweets (
+   id BIGINT,
+   created_at STRING,
+   source STRING,
+   favorited BOOLEAN,
+   retweeted_status STRUCT<
+     text:STRING,
+     user:STRUCT<screen_name:STRING,name:STRING>,
+     retweet_count:INT>,
+   entities STRUCT<
+     urls:ARRAY<STRUCT<expanded_url:STRING>>,
+     user_mentions:ARRAY<STRUCT<screen_name:STRING,name:STRING>>,
+     hashtags:ARRAY<STRUCT<text:STRING>>>,
+   text STRING,
+   user STRUCT<
+     screen_name:STRING,
+     name:STRING,
+     friends_count:INT,
+     followers_count:INT,
+     statuses_count:INT,
+     verified:BOOLEAN,
+     utc_offset:INT,
+     time_zone:STRING>,
+   in_reply_to_screen_name STRING
+ ) 
+ PARTITIONED BY (datehour INT)
+ ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe'
+ LOCATION '/user/flume/tweets';
+
+
+12
+13
+14
+15
+19
+20
+21
+22
+23
+24
+25
+SELECT LOWER(hashtags.text), COUNT(*) AS total_count FROM new_tweets LATERAL VIEW EXPLODE(entities.hashtags) t1 AS hashtags GROUP BY LOWER(hashtags.text) ORDER BY  total_count DESC LIMIT 15;
+
+
+
+SELECT
+ LOWER(hashtags.text),
+ COUNT(*) AS total_count
+FROM tweets
+LATERAL VIEW EXPLODE(entities.hashtags) t1 AS hashtags
+GROUP BY LOWER(hashtags.text)
+ORDER BY total_count DESC
+LIMIT 15;
+
+
+SELECT
+ LOWER(hashtags.text),
+ COUNT(*) AS total_count
+FROM tweets
+LATERAL VIEW EXPLODE(entities.hashtags) t1 AS hashtags
+GROUP BY LOWER(hashtags.text)
+ORDER BY total_count DESC
+LIMIT 15;
+
+
+select user.name, user.url from new_tweets where user.description like "%bigdata%";
+
+add jar file:///usr/lib/hive/lib/hive-json-serde-0.2.jar file:///usr/lib/hive/lib/hive-serde-1.1.0-cdh5.8.0.jar file:///usr/lib/hive/lib/hive-serdes-1.0-SNAPSHOT.jar ;
+
+set hive.auto.convert.join.noconditionaltask.size = 10000000; set hive.support.concurrency = true; set hive.enforce.bucketing = true; set hive.exec.dynamic.partition.mode = nonstrict; set hive.txn.manager = org.apache.hadoop.hive.ql.lockmgr.DbTxnManager; set hive.compactor.initiator.on = true;
+set hive.compactor.worker.threads = 1 ;
+
+Success:
+1. Analyzing toptrendfinder using twitter hashtags (setjobbyclass adding)
+2. Processing json data into hive (one new db, see json data and process accordingly, add jar packages)
+3. 

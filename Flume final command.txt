@@ -1,0 +1,1 @@
+./bin/flume-ng agent -n TwitterAgent -c conf -f /usr/lib/ flume-ng/conf/flume.conf -Dtwitter4j.streamBaseURL=https://stream.twitter.com/1.1/

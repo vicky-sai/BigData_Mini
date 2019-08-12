@@ -1,0 +1,130 @@
+Interactive Mode (Grunt shell)
+
+gedit student.txt
+student = LOAD 'student.txt' USING PigStorage(',') as (id:int,name:chararray,city:chararray);
+dump student;
+
+
+
+
+Batch Mode (Script)
+
+gedit sample_pig.pig
+
+student = LOAD 'student.txt' USING PigStorage(',') as (id:int,name:chararray,city:chararray);
+  
+Dump student;
+
+exec /home/cloudera/sample_pig.pig
+
+
+
+
+
+student = LOAD 'student.txt' USING PigStorage(',') as (id:int,name:chararray,city:chararray);
+STORE student INTO '/home/cloudera/pig_output' USING PigStorage (',');
+DUMP student
+Describe student
+explain student
+illustrate student
+
+
+gedit student1.txt
+student1 = LOAD 'student1.txt' USING PigStorage(',') as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+grouping =  GROUP student1 by age;
+dumping grouping;
+
+
+
+student1 = LOAD 'student1.txt' USING PigStorage(',') as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+student2 = LOAD 'student1.txt' USING PigStorage(',') as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+student3 = JOIN student1 BY id, student2 BY id;
+dump student3
+
+
+
+gedit customers.txt
+gedit orders.txt
+
+customers = LOAD '/home/cloudera/customers.txt' USING PigStorage(',') as (id:int, name:chararray, age:int, address:chararray, salary:int);
+orders = LOAD '/home/cloudera/orders.txt' USING PigStorage(',') as (oid:int, date:chararray, customer_id:int, amount:int);
+cross_data = CROSS customers, orders;
+Dump cross_data;
+
+
+union_out = UNION student1, student2;
+Dump union_out;
+
+
+SPLIT student1 into student_details1 if age<23, student_details2 if (age>=23);
+Dump student_details1;  
+Dump student_details2;
+
+
+filter_data = FILTER student1 BY city == 'Chennai';
+Dump filter_data;
+
+
+gedit student4.txt
+student4 = LOAD 'student4.txt' USING PigStorage(',') as (id:int, firstname:chararray, lastname:chararray, age:int, phone:chararray, city:chararray);
+distinct_data = DISTINCT student4;
+Dump distinct_data;
+
+
+
+foreach_data = FOREACH student1 GENERATE id,age,city;
+Dump foreach_data;
+
+
+order_by_data = ORDER student1 BY age DESC;
+Dump order_by_data; 
+
+
+limit_data = LIMIT student1 4; 
+Dump limit_data; 
+
+
+
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
